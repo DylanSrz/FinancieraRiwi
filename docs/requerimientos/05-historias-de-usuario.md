@@ -13,10 +13,10 @@ Backlog del producto, organizado por épica. Cada historia es un issue del table
 |---|---|---|---|---|---|---|---|
 | [HU-01](#hu-01) | Invitar usuario y activar cuenta por correo | E1 | Must | 5 | Sprint 1 | @Kerin0011 | [#10](https://github.com/DylanSrz/FinancieraRiwi/issues/10) |
 | [HU-02](#hu-02) | Iniciar sesión con correo y contraseña | E1 | Must | 3 | Sprint 1 | @Kerin0011 | [#11](https://github.com/DylanSrz/FinancieraRiwi/issues/11) |
-| [HU-03](#hu-03) | Iniciar sesión con Google | E1 | Must | 5 | Sprint 1 | @Kerin0011 | [#12](https://github.com/DylanSrz/FinancieraRiwi/issues/12) |
+| [HU-03](#hu-03) | Iniciar sesión con Google | E1 | Must | 5 | Sprint 1 | @DylanSrz | [#12](https://github.com/DylanSrz/FinancieraRiwi/issues/12) |
 | [HU-04](#hu-04) | Recuperar contraseña | E1 | Should | 3 | Sprint 2 | @Kerin0011 | [#13](https://github.com/DylanSrz/FinancieraRiwi/issues/13) |
 | [HU-05](#hu-05) | Mantener y cerrar la sesión de forma segura | E1 | Must | 3 | Sprint 1 | @Kerin0011 | [#14](https://github.com/DylanSrz/FinancieraRiwi/issues/14) |
-| [HU-06](#hu-06) | Gestionar usuarios y roles | E1 | Should | 3 | Sprint 1 | @DylanSrz | [#15](https://github.com/DylanSrz/FinancieraRiwi/issues/15) |
+| [HU-06](#hu-06) | Gestionar usuarios y roles | E1 | Should | 3 | Sprint 1 | @Gonza204658 | [#15](https://github.com/DylanSrz/FinancieraRiwi/issues/15) |
 | [HU-07](#hu-07) | Importar colaboradores desde CSV | E2 | Must | 5 | Sprint 1 | @Nesdael | [#16](https://github.com/DylanSrz/FinancieraRiwi/issues/16) |
 | [HU-08](#hu-08) | Validar el CSV y ver errores por fila | E2 | Must | 3 | Sprint 1 | @Nesdael | [#17](https://github.com/DylanSrz/FinancieraRiwi/issues/17) |
 | [HU-09](#hu-09) | Crear y editar un colaborador | E2 | Must | 3 | Sprint 1 | @Gonza204658 | [#18](https://github.com/DylanSrz/FinancieraRiwi/issues/18) |
@@ -31,8 +31,8 @@ Backlog del producto, organizado por épica. Cada historia es un issue del table
 | [HU-18](#hu-18) | Liquidar manualmente o reliquidar antes del cierre | E5 | Must | 3 | Sprint 2 | @Nesdael | [#27](https://github.com/DylanSrz/FinancieraRiwi/issues/27) |
 | [HU-19](#hu-19) | Cerrar (aprobar) el periodo de nómina | E5 | Should | 2 | Sprint 2 | @DylanSrz | [#28](https://github.com/DylanSrz/FinancieraRiwi/issues/28) |
 | [HU-20](#hu-20) | Consultar historial de ejecuciones y auditoría | E5 | Should | 3 | Sprint 2 | @Kerin0011 | [#29](https://github.com/DylanSrz/FinancieraRiwi/issues/29) |
-| [HU-21](#hu-21) | Administrar los parámetros legales por año | E6 | Must | 3 | Sprint 1 | @Kerin0011 | [#30](https://github.com/DylanSrz/FinancieraRiwi/issues/30) |
-| [HU-22](#hu-22) | Configurar el valor hora por rol | E6 | Should | 2 | Sprint 1 | @Kerin0011 | [#31](https://github.com/DylanSrz/FinancieraRiwi/issues/31) |
+| [HU-21](#hu-21) | Administrar los parámetros legales por año | E6 | Must | 3 | Sprint 1 | @Gonza204658 | [#30](https://github.com/DylanSrz/FinancieraRiwi/issues/30) |
+| [HU-22](#hu-22) | Configurar el valor hora por rol | E6 | Should | 2 | Sprint 1 | @Gonza204658 | [#31](https://github.com/DylanSrz/FinancieraRiwi/issues/31) |
 | [HU-23](#hu-23) | Ver el resumen de nómina del periodo | E7 | Must | 3 | Sprint 2 | @Gonza204658 | [#32](https://github.com/DylanSrz/FinancieraRiwi/issues/32) |
 | [HU-24](#hu-24) | Exportar la nómina a CSV y PDF | E7 | Should | 3 | Sprint 3 | @Gonza204658 | [#33](https://github.com/DylanSrz/FinancieraRiwi/issues/33) |
 | [HU-25](#hu-25) | Enviar el desprendible de pago a cada colaborador | E7 | Should | 3 | Sprint 2 | @Nesdael | [#34](https://github.com/DylanSrz/FinancieraRiwi/issues/34) |
@@ -90,7 +90,7 @@ Backlog del producto, organizado por épica. Cada historia es un issue del table
 
 | Prioridad | Puntos | Sprint | Responsable | Requerimiento | Reglas de negocio |
 |---|---|---|---|---|---|
-| Must | 5 | Sprint 1 | @Kerin0011 | RF-03 | RN-20 |
+| Must | 5 | Sprint 1 | @DylanSrz | RF-03 | RN-20 |
 
 **Criterios de aceptación**
 
@@ -138,7 +138,7 @@ Backlog del producto, organizado por épica. Cada historia es un issue del table
 
 | Prioridad | Puntos | Sprint | Responsable | Requerimiento | Reglas de negocio |
 |---|---|---|---|---|---|
-| Should | 3 | Sprint 1 | @DylanSrz | RF-06 | RN-20 |
+| Should | 3 | Sprint 1 | @Gonza204658 | RF-06 | RN-20 |
 
 **Criterios de aceptación**
 
@@ -427,7 +427,7 @@ Backlog del producto, organizado por épica. Cada historia es un issue del table
 
 | Prioridad | Puntos | Sprint | Responsable | Requerimiento | Reglas de negocio |
 |---|---|---|---|---|---|
-| Must | 3 | Sprint 1 | @Kerin0011 | RF-21 | RN-16 |
+| Must | 3 | Sprint 1 | @Gonza204658 | RF-21 | RN-16 |
 
 **Criterios de aceptación**
 
@@ -444,7 +444,7 @@ Backlog del producto, organizado por épica. Cada historia es un issue del table
 
 | Prioridad | Puntos | Sprint | Responsable | Requerimiento | Reglas de negocio |
 |---|---|---|---|---|---|
-| Should | 2 | Sprint 1 | @Kerin0011 | RF-22 | RN-01, RN-02, RN-03, RN-16 |
+| Should | 2 | Sprint 1 | @Gonza204658 | RF-22 | RN-01, RN-02, RN-03, RN-16 |
 
 **Criterios de aceptación**
 
