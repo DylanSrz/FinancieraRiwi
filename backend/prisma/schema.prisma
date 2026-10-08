@@ -1,0 +1,373 @@
+// Modelo de datos de FinancieraRiwi — ver docs/diseno/modelo-de-datos.md
+// Convenciones: tablas en snake_case plural (@@map), montos en Decimal(14,2), porcentajes en Decimal(7,5) (0.04 = 4 %).
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ------------------------------------------------------------------ Enums
+
+enum RolUsuario {
+  ADMIN
+  AUX_CONTABLE
+}
+
+enum EstadoUsuario {
+  PENDIENTE
+  ACTIVO
+  INACTIVO
+}
+
+enum TipoTokenAccion {
+  INVITACION
+  RECUPERACION
+}
+
+enum RolColaborador {
+  GERENTE
+  ADMINISTRADOR
+  OPERARIO
+}
+
+enum EstadoPeriodo {
+  ABIERTO
+  CALCULADO
+  CERRADO
+}
+
+enum OrigenEjecucion {
+  PROGRAMADA
+  MANUAL
+}
+
+enum EstadoEjecucion {
+  EN_CURSO
+  EXITOSA
+  CON_ADVERTENCIAS
+  FALLIDA
+}
+
+enum EstadoEnvio {
+  PENDIENTE
+  ENVIADO
+  FALLIDO
+}
+
+// ------------------------------------------------------------------ Empresa y usuarios
+
+/// Empresa cliente. En el MVP existe una sola (Financiera Riwi), pero todo cuelga de empresaId (ADR-005).
+model Empresa {
+  id          String   @id @default(uuid()) @db.Uuid
+  nombre      String
+  nit         String   @unique
+  zonaHoraria String   @default("America/Bogota")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  usuarios          Usuario[]
+  colaboradores     Colaborador[]
+  periodos          Periodo[]
+  parametrosLegales ParametroLegal[]
+  valoresHora       ValorHoraRol[]
+  bonificaciones    BonificacionHijos[]
+  ejecuciones       Ejecucion[]
+  auditorias        Auditoria[]
+
+  @@map("empresas")
+}
+
+model Usuario {
+  id               String        @id @default(uuid()) @db.Uuid
+  empresaId        String        @db.Uuid
+  nombre           String
+  email            String        @unique
+  passwordHash     String?
+  googleId         String?       @unique
+  rol              RolUsuario
+  estado           EstadoUsuario @default(PENDIENTE)
+  emailVerificado  Boolean       @default(false)
+  intentosFallidos Int           @default(0)
+  bloqueadoHasta   DateTime?
+  ultimoAcceso     DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  empresa          Empresa         @relation(fields: [empresaId], references: [id])
+  refreshTokens    RefreshToken[]
+  tokensAccion     TokenAccion[]
+  periodosCerrados Periodo[]       @relation("CerradoPor")
+  ejecuciones      Ejecucion[]
+  registrosHoras   RegistroHoras[]
+  auditorias       Auditoria[]
+
+  @@index([empresaId])
+  @@map("usuarios")
+}
+
+/// Refresh tokens rotativos. Se guarda solo el hash; `familia` permite revocar toda la cadena si se detecta reutilización.
+model RefreshToken {
+  id         String    @id @default(uuid()) @db.Uuid
+  usuarioId  String    @db.Uuid
+  tokenHash  String    @unique
+  familia    String    @db.Uuid
+  expiraEn   DateTime
+  revocadoEn DateTime?
+  userAgent  String?
+  ip         String?
+  createdAt  DateTime  @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([familia])
+  @@map("refresh_tokens")
+}
+
+/// Tokens de un solo uso enviados por correo (invitación / recuperación de contraseña).
+model TokenAccion {
+  id        String          @id @default(uuid()) @db.Uuid
+  usuarioId String          @db.Uuid
+  tipo      TipoTokenAccion
+  tokenHash String          @unique
+  expiraEn  DateTime
+  usadoEn   DateTime?
+  createdAt DateTime        @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, tipo])
+  @@map("tokens_accion")
+}
+
+// ------------------------------------------------------------------ Colaboradores y horas
+
+model Colaborador {
+  id             String         @id @default(uuid()) @db.Uuid
+  empresaId      String         @db.Uuid
+  nombres        String
+  apellidos      String
+  email          String
+  rol            RolColaborador
+  edad           Int
+  hijos          Int            @default(0)
+  claseRiesgoArl Int            @default(1)
+  activo         Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  empresa        Empresa         @relation(fields: [empresaId], references: [id])
+  registrosHoras RegistroHoras[]
+  liquidaciones  Liquidacion[]
+
+  @@unique([empresaId, email])
+  @@index([empresaId, activo])
+  @@map("colaboradores")
+}
+
+/// Periodo mensual de nómina. Estados: ABIERTO → CALCULADO → CERRADO (un periodo cerrado es inmutable, RN-18).
+model Periodo {
+  id           String        @id @default(uuid()) @db.Uuid
+  empresaId    String        @db.Uuid
+  anio         Int
+  mes          Int
+  fechaCorte   DateTime      @db.Date
+  estado       EstadoPeriodo @default(ABIERTO)
+  cerradoPorId String?       @db.Uuid
+  cerradoEn    DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  empresa        Empresa         @relation(fields: [empresaId], references: [id])
+  cerradoPor     Usuario?        @relation("CerradoPor", fields: [cerradoPorId], references: [id])
+  registrosHoras RegistroHoras[]
+  liquidaciones  Liquidacion[]
+  ejecuciones    Ejecucion[]
+
+  @@unique([empresaId, anio, mes])
+  @@map("periodos")
+}
+
+model RegistroHoras {
+  id              String   @id @default(uuid()) @db.Uuid
+  periodoId       String   @db.Uuid
+  colaboradorId   String   @db.Uuid
+  horas           Decimal  @db.Decimal(6, 2)
+  registradoPorId String?  @db.Uuid
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  periodo       Periodo     @relation(fields: [periodoId], references: [id])
+  colaborador   Colaborador @relation(fields: [colaboradorId], references: [id])
+  registradoPor Usuario?    @relation(fields: [registradoPorId], references: [id])
+
+  @@unique([periodoId, colaboradorId])
+  @@map("registros_horas")
+}
+
+// ------------------------------------------------------------------ Parámetros
+
+/// Parámetros legales por año (RN-16). `fspTramos` y `arlTarifas` son JSON para soportar tablas escalonadas.
+model ParametroLegal {
+  id                   String   @id @default(uuid()) @db.Uuid
+  empresaId            String   @db.Uuid
+  anio                 Int
+  smmlv                Decimal  @db.Decimal(14, 2)
+  auxilioTransporte    Decimal  @db.Decimal(14, 2)
+  topeAuxilioSmmlv     Decimal  @default(2) @db.Decimal(5, 2)
+  saludEmpleado        Decimal  @db.Decimal(7, 5)
+  pensionEmpleado      Decimal  @db.Decimal(7, 5)
+  saludEmpleador       Decimal  @db.Decimal(7, 5)
+  pensionEmpleador     Decimal  @db.Decimal(7, 5)
+  cajaCompensacion     Decimal  @db.Decimal(7, 5)
+  icbf                 Decimal  @db.Decimal(7, 5)
+  sena                 Decimal  @db.Decimal(7, 5)
+  topeExoneracionSmmlv Decimal  @default(10) @db.Decimal(5, 2)
+  horasMaxMes          Decimal  @db.Decimal(6, 2)
+  /// [{ "desdeSmmlv": 4, "hastaSmmlv": 16, "tasa": 0.01 }, ...]
+  fspTramos            Json
+  /// { "1": 0.00522, "2": 0.01044, "3": 0.02436, "4": 0.0435, "5": 0.0696 }
+  arlTarifas           Json
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@unique([empresaId, anio])
+  @@map("parametros_legales")
+}
+
+/// Valor hora por rol con vigencia (RN-01..03, HU-22).
+model ValorHoraRol {
+  id           String         @id @default(uuid()) @db.Uuid
+  empresaId    String         @db.Uuid
+  rol          RolColaborador
+  valorHora    Decimal        @db.Decimal(14, 2)
+  vigenteDesde DateTime       @db.Date
+  createdAt    DateTime       @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@unique([empresaId, rol, vigenteDesde])
+  @@map("valores_hora_rol")
+}
+
+/// Bonificación por número de hijos con vigencia (RN-04..06). `hijos = 3` aplica para 3 o más.
+model BonificacionHijos {
+  id           String   @id @default(uuid()) @db.Uuid
+  empresaId    String   @db.Uuid
+  hijos        Int
+  valor        Decimal  @db.Decimal(14, 2)
+  vigenteDesde DateTime @db.Date
+  createdAt    DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@unique([empresaId, hijos, vigenteDesde])
+  @@map("bonificaciones_hijos")
+}
+
+// ------------------------------------------------------------------ Liquidación
+
+model Ejecucion {
+  id                 String          @id @default(uuid()) @db.Uuid
+  empresaId          String          @db.Uuid
+  periodoId          String          @db.Uuid
+  origen             OrigenEjecucion
+  estado             EstadoEjecucion @default(EN_CURSO)
+  ejecutadaPorId     String?         @db.Uuid
+  iniciadaEn         DateTime        @default(now())
+  finalizadaEn       DateTime?
+  totalColaboradores Int             @default(0)
+  totalNeto          Decimal         @default(0) @db.Decimal(16, 2)
+  /// [{ "colaboradorId": "...", "mensaje": "Sin horas registradas" }]
+  advertencias       Json?
+  error              String?
+
+  empresa       Empresa       @relation(fields: [empresaId], references: [id])
+  periodo       Periodo       @relation(fields: [periodoId], references: [id])
+  ejecutadaPor  Usuario?      @relation(fields: [ejecutadaPorId], references: [id])
+  liquidaciones Liquidacion[]
+
+  @@index([periodoId])
+  @@map("ejecuciones")
+}
+
+/// Resultado por colaborador y periodo. La restricción única (periodoId, colaboradorId) garantiza la idempotencia (RN-17).
+model Liquidacion {
+  id                 String      @id @default(uuid()) @db.Uuid
+  periodoId          String      @db.Uuid
+  colaboradorId      String      @db.Uuid
+  ejecucionId        String      @db.Uuid
+  version            Int         @default(1)
+  // Insumos
+  horas              Decimal     @db.Decimal(6, 2)
+  valorHora          Decimal     @db.Decimal(14, 2)
+  hijos              Int
+  // Devengados
+  devengadoBasico    Decimal     @db.Decimal(14, 2)
+  bonificacionHijos  Decimal     @db.Decimal(14, 2)
+  auxilioTransporte  Decimal     @db.Decimal(14, 2)
+  totalDevengado     Decimal     @db.Decimal(14, 2)
+  // Deducciones del colaborador
+  ibc                Decimal     @db.Decimal(14, 2)
+  saludEmpleado      Decimal     @db.Decimal(14, 2)
+  pensionEmpleado    Decimal     @db.Decimal(14, 2)
+  fsp                Decimal     @db.Decimal(14, 2)
+  totalDeducciones   Decimal     @db.Decimal(14, 2)
+  netoPagar          Decimal     @db.Decimal(14, 2)
+  // Costo del empleador
+  saludEmpleador     Decimal     @db.Decimal(14, 2)
+  pensionEmpleador   Decimal     @db.Decimal(14, 2)
+  arl                Decimal     @db.Decimal(14, 2)
+  cajaCompensacion   Decimal     @db.Decimal(14, 2)
+  icbf               Decimal     @db.Decimal(14, 2)
+  sena               Decimal     @db.Decimal(14, 2)
+  cesantias          Decimal     @db.Decimal(14, 2)
+  interesesCesantias Decimal     @db.Decimal(14, 2)
+  prima              Decimal     @db.Decimal(14, 2)
+  vacaciones         Decimal     @db.Decimal(14, 2)
+  costoEmpleador     Decimal     @db.Decimal(14, 2)
+  // Trazabilidad
+  parametrosUsados   Json
+  alertas            Json?
+  estadoEnvio        EstadoEnvio @default(PENDIENTE)
+  enviadoEn          DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  periodo     Periodo     @relation(fields: [periodoId], references: [id])
+  colaborador Colaborador @relation(fields: [colaboradorId], references: [id])
+  ejecucion   Ejecucion   @relation(fields: [ejecucionId], references: [id])
+
+  @@unique([periodoId, colaboradorId])
+  @@map("liquidaciones")
+}
+
+// ------------------------------------------------------------------ Auditoría
+
+model Auditoria {
+  id        String   @id @default(uuid()) @db.Uuid
+  empresaId String   @db.Uuid
+  usuarioId String?  @db.Uuid
+  accion    String
+  entidad   String
+  entidadId String?
+  antes     Json?
+  despues   Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  empresa Empresa  @relation(fields: [empresaId], references: [id])
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@index([empresaId, createdAt])
+  @@index([entidad, entidadId])
+  @@map("auditorias")
+}
