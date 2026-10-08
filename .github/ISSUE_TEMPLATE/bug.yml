@@ -1,0 +1,50 @@
+name: Reporte de bug
+description: Algo no funciona como dicen los criterios de aceptación.
+title: "[BUG] "
+labels: ["tipo: bug"]
+body:
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción
+      description: ¿Qué pasó?
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducir
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Resultado esperado vs. obtenido
+      description: Incluye valores concretos (p. ej. "neto esperado $3.740.295, obtenido $3.989.390").
+    validations:
+      required: true
+  - type: dropdown
+    id: severidad
+    attributes:
+      label: Severidad
+      options:
+        - "Crítica — cálculo de nómina incorrecto o pérdida de datos"
+        - "Alta — bloquea una funcionalidad"
+        - "Media — hay forma de rodearlo"
+        - "Baja — visual o de texto"
+    validations:
+      required: true
+  - type: input
+    id: entorno
+    attributes:
+      label: Entorno
+      placeholder: "Local / Producción · navegador · commit"
+  - type: input
+    id: historia
+    attributes:
+      label: Historia relacionada
+      placeholder: "HU-15 (#24)"

@@ -1,0 +1,37 @@
+# Dependencias
+node_modules/
+
+# Builds
+dist/
+build/
+*.tsbuildinfo
+
+# Prisma (cliente generado)
+backend/src/generated/
+
+# Variables de entorno (solo se versionan los .env.example)
+.env
+.env.*
+!.env.example
+
+# Pruebas y cobertura
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Despliegue
+.vercel/
+.render/
+
+# Editores y sistema operativo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
