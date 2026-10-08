@@ -4,10 +4,10 @@ En todo el equipo, **todos programan y todos revisan PRs**. Los roles indican qu
 
 | Integrante | Rol principal | Responsabilidades | Foco técnico |
 |---|---|---|---|
-| **@DylanSrz** | **Product Owner + Tech Lead** | • Dueño del backlog: prioriza, refina y acepta historias.<br>• Representa al cliente y valida el alcance.<br>• Decide la arquitectura junto al equipo.<br>• Administra el repositorio. | Motor de liquidación (E4), cierre de periodo, gestión de usuarios |
+| **@DylanSrz** | **Product Owner + Tech Lead** | • Dueño del backlog: prioriza, refina y acepta historias.<br>• Representa al cliente y valida el alcance.<br>• Decide la arquitectura junto al equipo.<br>• Administra el repositorio. | Motor de liquidación (E4), login con Google, cierre de periodo |
 | **@Nesdael** | **Scrum Master + QA** | • Facilita las ceremonias.<br>• Cuida el tablero y la Definition of Ready/Done.<br>• Elimina bloqueos.<br>• Diseña y ejecuta las pruebas de aceptación.<br>• Aprueba la calidad antes del cierre del sprint. | Importación CSV, horas, ejecución programada, correos |
-| **@Kerin0011** | **Analista de requerimientos + BD/DevOps** | • Mantiene la documentación de requerimientos y la trazabilidad.<br>• Responde por la normativa legal y los parámetros.<br>• Diseña el modelo de datos.<br>• Configura Supabase, Render, Vercel, Resend y Google. | Autenticación (E1), parámetros (E6), auditoría |
-| **@Gonza204658** | **Frontend lead + UX** | • Wireframes y diseño de las pantallas.<br>• Arquitectura del frontend.<br>• Accesibilidad y usabilidad. | Todas las pantallas, reportes y exportación |
+| **@Kerin0011** | **Analista de requerimientos + BD/DevOps** | • Mantiene la documentación de requerimientos y la trazabilidad.<br>• Responde por la normativa legal y los parámetros.<br>• Diseña el modelo de datos.<br>• Configura Supabase, Render, Vercel, Resend y Google. | Autenticación nativa y sesiones (E1), auditoría, infraestructura |
+| **@Gonza204658** | **Frontend lead + UX** | • Wireframes y diseño de las pantallas.<br>• Arquitectura del frontend.<br>• Accesibilidad y usabilidad. | Todas las pantallas; gestión de usuarios, colaboradores y parámetros (E6); reportes |
 
 ## Matriz RACI de los entregables principales
 
