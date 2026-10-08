@@ -1,0 +1,51 @@
+name: Historia de usuario
+description: Funcionalidad descrita desde la perspectiva del usuario.
+title: "[HU-XX] "
+labels: ["tipo: historia"]
+body:
+  - type: input
+    id: epica
+    attributes:
+      label: Épica
+      placeholder: "E4 Motor de liquidación (#5)"
+    validations:
+      required: true
+  - type: textarea
+    id: historia
+    attributes:
+      label: Historia de usuario
+      value: "**Como** <rol>, **quiero** <acción>, **para** <beneficio>."
+    validations:
+      required: true
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      description: Formato Dado / Cuando / Entonces, con ejemplos concretos (valores numéricos cuando aplique).
+      value: |
+        - [ ] Dado ..., cuando ..., entonces ...
+        - [ ] Dado ..., cuando ..., entonces ...
+    validations:
+      required: true
+  - type: input
+    id: trazabilidad
+    attributes:
+      label: Trazabilidad
+      description: Requerimiento funcional y reglas de negocio relacionadas.
+      placeholder: "RF-12 · RN-01, RN-07"
+  - type: dropdown
+    id: prioridad
+    attributes:
+      label: Prioridad (MoSCoW)
+      options: ["Must", "Should", "Could", "Won't"]
+    validations:
+      required: true
+  - type: dropdown
+    id: puntos
+    attributes:
+      label: Estimación (story points)
+      options: ["1", "2", "3", "5", "8"]
+  - type: textarea
+    id: notas
+    attributes:
+      label: Notas técnicas / dependencias

@@ -1,0 +1,29 @@
+name: Tarea técnica
+description: Trabajo técnico, de infraestructura o documentación que no es una historia de usuario.
+title: "[T-XX] "
+labels: ["tipo: tarea"]
+body:
+  - type: input
+    id: padre
+    attributes:
+      label: Épica o historia padre
+      placeholder: "HU-12 (#21) / E8 (#9)"
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      value: |
+        - [ ] ...
+    validations:
+      required: true
+  - type: dropdown
+    id: puntos
+    attributes:
+      label: Estimación (story points)
+      options: ["1", "2", "3", "5", "8"]
