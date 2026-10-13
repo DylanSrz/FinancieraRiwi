@@ -3,7 +3,8 @@ import { createContext } from 'react';
 export type RolUsuario = 'ADMIN' | 'AUX_CONTABLE';
 
 export interface Usuario {
-  sub: string;
+  id: string;
+  nombre: string;
   email: string;
   rol: RolUsuario;
   empresaId: string;

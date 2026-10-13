@@ -3,8 +3,8 @@ import { alExpirarSesion, api, setAccessToken } from '../lib/api';
 import { AuthContext, type Usuario } from './auth-context';
 
 /**
- * Estado de sesión. Al cargar la app intenta recuperar la sesión con el refresh token (cookie httpOnly).
- * Los endpoints se implementan en HU-02 (login) y HU-05 (refresh/logout).
+ * Estado de sesión (HU-02, HU-05). Al cargar la app intenta recuperar la sesión con el
+ * refresh token (cookie httpOnly); así también se completa el login con Google (HU-03).
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);

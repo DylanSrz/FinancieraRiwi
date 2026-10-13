@@ -27,8 +27,12 @@ export class MailService {
 
   async enviar({ para, asunto, html }: Correo): Promise<{ id: string | null }> {
     if (!this.resend) {
+      // Solo en desarrollo (sin RESEND_API_KEY): se muestran los enlaces para poder probar los flujos.
+      const enlaces = [...new Set(html.match(/href="[^"]+"/g) ?? [])].map((h) =>
+        h.slice(6, -1),
+      );
       this.logger.warn(
-        `[correo simulado] para=${String(para)} asunto="${asunto}"`,
+        `[correo simulado] para=${String(para)} asunto="${asunto}"${enlaces.map((e) => `\n  → ${e}`).join('')}`,
       );
       return { id: null };
     }

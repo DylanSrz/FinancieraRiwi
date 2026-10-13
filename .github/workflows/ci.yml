@@ -17,6 +17,21 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nomina_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nomina_test
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -29,6 +44,10 @@ jobs:
       - run: npm run format:check
       - run: npm run lint
       - run: npm test
+      - name: Migraciones en la BD de pruebas
+        run: npx prisma migrate deploy
+        env:
+          DIRECT_URL: ${{ env.TEST_DATABASE_URL }}
       - run: npm run test:e2e
       - run: npm run build
 

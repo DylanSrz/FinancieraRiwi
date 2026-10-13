@@ -72,23 +72,27 @@ Más detalle en [Arquitectura](docs/diseno/arquitectura.md) y en las [decisiones
 
 ## Cómo ejecutar en local
 
-Requisitos: **Node.js 24** (`nvm use`), npm 10 o superior y un proyecto de Supabase (o un PostgreSQL local).
+Requisitos: **Node.js 24** (`nvm use`), npm 10 o superior y **Docker**.
 
 ```bash
+docker compose up -d                 # PostgreSQL en localhost:5433 (bases nomina y nomina_test)
+
 # 1. Backend
 cd backend
-cp .env.example .env          # completar DATABASE_URL, DIRECT_URL y los secretos
-npm install                   # también genera el cliente de Prisma
-npm run prisma:migrate        # crea las tablas
-npm run prisma:seed           # parámetros 2026, valores hora y usuario administrador
-npm run start:dev             # http://localhost:3000/api · Swagger en /api/docs
+cp .env.example .env                 # listo para local
+npm install                          # también genera el cliente de Prisma
+npm run prisma:deploy                # crea las tablas
+npm run prisma:seed                  # parámetros 2026, valores hora y usuario administrador
+npm run start:dev                    # http://localhost:3000/api · Swagger en /api/docs
 
 # 2. Frontend (otra terminal)
 cd frontend
 cp .env.example .env
 npm install
-npm run dev                   # http://localhost:5173
+npm run dev                          # http://localhost:5173
 ```
+
+Usuario inicial: `admin@financierariwi.com` / `CambiaEsta2026`.
 
 Guía completa: [Configuración local](docs/guias/configuracion-local.md) · [Servicios externos (Supabase, Google, Resend, Render, Vercel)](docs/guias/configuracion-servicios.md).
 
@@ -112,6 +116,7 @@ Guía completa: [Configuración local](docs/guias/configuracion-local.md) · [Se
 | [Reglas de negocio](docs/requerimientos/04-reglas-de-negocio.md) | Fórmulas y casos de prueba |
 | [Plan de trabajo](docs/proceso/plan-de-trabajo.md) | Sprints, ceremonias y entregables |
 | [Reglas de trabajo](CONTRIBUTING.md) | Ramas, commits, PRs y revisiones |
+| [Changelog](CHANGELOG.md) | Cambios por versión y sprint |
 
 ## Gestión del proyecto
 
@@ -132,4 +137,4 @@ Detalle en [Roles y responsabilidades](docs/proceso/roles-y-responsabilidades.md
 
 ---
 
-RiwiTech · versión 0.1.0 (Sprint 0)
+RiwiTech · versión 0.1.0 (Sprint 1)
