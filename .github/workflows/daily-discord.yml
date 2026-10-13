@@ -1,0 +1,23 @@
+name: Daily en Discord
+
+# Horarios en UTC (Colombia = UTC−5):
+#   lun, mié, vie 8:00 a. m. → daily asíncrona
+#   mar, jue 12:30 p. m.     → recordatorio de la clase (1:00 a 4:00 p. m.)
+on:
+  schedule:
+    - cron: '0 13 * * 1,3,5'
+    - cron: '30 17 * * 2,4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  daily:
+    name: Publicar daily
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: bash .github/scripts/daily-discord.sh
+        env:
+          DISCORD_WEBHOOK_DAILY: ${{ secrets.DISCORD_WEBHOOK_DAILY }}
