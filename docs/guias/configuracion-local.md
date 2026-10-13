@@ -56,7 +56,31 @@ npm run dev               # http://localhost:5173
 - **Llamadas a la API:** Vite reenvía `/api` a `http://localhost:3000`.
 - **Navegar sin login:** mientras no esté implementado, puedes poner `VITE_DEMO_SIN_AUTH=true` en `frontend/.env`.
 
-## 4. Antes de abrir un PR
+## 4. Probar el flujo completo en local
+
+1. Inicia sesión con el administrador del seed (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`).
+2. **Colaboradores → Importar CSV**: usa `docs/requerimientos/plantilla-colaboradores.csv`.
+3. **Simulador**: operario, 168 h, 2 hijos → neto **$3.740.295** (CP-01).
+4. **Usuarios → Invitar usuario**: sin `RESEND_API_KEY` el correo no se envía; la consola del backend muestra
+   `[correo simulado]` con el enlace de activación (`http://localhost:5173/activar?token=…`). Ábrelo para activar la cuenta.
+
+## 5. Pruebas e2e (necesitan PostgreSQL)
+
+Las pruebas e2e usan una base de datos **aparte** que se vacía en cada ejecución. Por defecto
+`postgresql://postgres:postgres@localhost:5433/nomina_test` (cámbiala con `TEST_DATABASE_URL`).
+
+```bash
+# una sola vez: base de pruebas en Docker (puerto 5433)
+docker run -d --name nomina-db -e POSTGRES_PASSWORD=postgres -p 5433:5432 postgres:17-alpine
+docker exec nomina-db psql -U postgres -c "create database nomina_test"
+DIRECT_URL=postgresql://postgres:postgres@localhost:5433/nomina_test npx prisma migrate deploy
+
+npm run test:e2e
+```
+
+En CI (GitHub Actions) se levanta un PostgreSQL como servicio y se aplican las migraciones antes de las e2e.
+
+## 6. Antes de abrir un PR
 
 En `backend/` y en `frontend/`:
 
@@ -69,7 +93,7 @@ npm run build
 
 En `backend/` también: `npm run test:e2e`.
 
-## 5. Probar la ejecución programada en local
+## 7. Probar la ejecución programada en local
 
 ```bash
 curl -X POST http://localhost:3000/api/liquidaciones/ejecucion-programada \

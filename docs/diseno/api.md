@@ -18,13 +18,13 @@
 | 404 | Recurso inexistente o de otra empresa |
 | 409 | Conflicto: email duplicado, periodo cerrado |
 | 429 | Demasiadas peticiones |
-| 501 | Endpoint definido pero aún no implementado (Sprint 0) |
+| 501 | Endpoint definido pero aún no implementado (historias de Sprint 2 y 3) |
 
 ## Autenticación — `auth` (E1)
 
 | Método | Ruta | Acceso | Descripción | HU |
 |---|---|---|---|---|
-| POST | `/auth/login` | 🌐 | Inicia sesión con correo y contraseña. Devuelve `{ accessToken }` y la cookie de refresh | HU-02 |
+| POST | `/auth/login` | 🌐 | Inicia sesión con correo y contraseña. Devuelve `{ accessToken }` y la cookie `nomina_rt` (httpOnly, `Path=/api/auth`). 5 fallos en 15 min bloquean la cuenta | HU-02 |
 | GET | `/auth/google` | 🌐 | Redirige a Google | HU-03 |
 | GET | `/auth/google/callback` | 🌐 | Callback de Google: crea la cookie y redirige al frontend | HU-03 |
 | POST | `/auth/activar` | 🌐 | `{ token, password }`: activa una cuenta invitada | HU-01 |
@@ -32,7 +32,7 @@
 | POST | `/auth/logout` | 🔒 | Revoca el refresh token | HU-05 |
 | POST | `/auth/recuperar` | 🌐 | `{ email }`: envía el enlace (siempre responde 202) | HU-04 |
 | POST | `/auth/restablecer` | 🌐 | `{ token, password }` | HU-04 |
-| GET | `/auth/me` | 🔒 | Usuario autenticado | — |
+| GET | `/auth/me` | 🔒 | Perfil: `{ id, nombre, email, rol, empresaId }` | — |
 
 ## Usuarios — `usuarios` (E1) · solo `ADMIN`
 
@@ -47,12 +47,13 @@
 
 | Método | Ruta | Descripción | HU |
 |---|---|---|---|
-| GET | `/colaboradores?q=&rol=&estado=&pagina=` | Lista paginada (20 por página) | HU-10 |
+| GET | `/colaboradores?q=&rol=&estado=activos\|inactivos\|todos&pagina=&porPagina=` | Lista paginada: `{ datos, total, pagina, porPagina }` | HU-10 |
+| GET | `/colaboradores/:id` | Detalle | HU-09 |
 | POST | `/colaboradores` | Crea un colaborador | HU-09 |
-| PATCH | `/colaboradores/:id` | Edita un colaborador | HU-09 |
+| PATCH | `/colaboradores/:id` | Edita un colaborador; `{ activo: true }` lo reactiva | HU-09 |
 | DELETE | `/colaboradores/:id` | Desactiva (no borra) | HU-09 |
-| POST | `/colaboradores/importaciones/previsualizar` | `multipart/form-data` (`archivo`). Devuelve `{ validas, invalidas: [{ fila, errores[] }] }` | HU-07, HU-08 |
-| POST | `/colaboradores/importaciones` | Confirma la importación en una transacción | HU-07 |
+| POST | `/colaboradores/importaciones/previsualizar` | `multipart/form-data` (`archivo`). Devuelve `{ total, validas: [{ fila, datos, accion: crear\|actualizar }], invalidas: [{ fila, datos, errores[] }] }`. No guarda nada | HU-07, HU-08 |
+| POST | `/colaboradores/importaciones` | Importa las filas válidas en una transacción. Devuelve `{ creados, actualizados, rechazados }` | HU-07 |
 
 ## Horas — `horas` (E3)
 
@@ -71,16 +72,19 @@
 | POST | `/periodos/:id/cerrar` | Cierra el periodo | HU-19 |
 | GET | `/periodos/:id/liquidaciones` | Detalle por colaborador | HU-23 |
 | GET | `/periodos/:id/ejecuciones` | Historial de ejecuciones | HU-20 |
+| POST | `/liquidaciones/simular` | `{ rol, horas, hijos, claseRiesgoArl?, fechaCorte? }`: calcula sin guardar, con los parámetros vigentes a la fecha | HU-12 a HU-16 |
 | POST | `/liquidaciones/ejecucion-programada` | Solo pg_cron, protegido con la cabecera `X-Cron-Secret` (no aparece en Swagger) | HU-17 |
 
 ## Parámetros — `parametros` (E6)
 
 | Método | Ruta | Acceso | Descripción | HU |
 |---|---|---|---|---|
-| GET | `/parametros/legales/:anio` | 🔒 | Parámetros del año | HU-21 |
+| GET | `/parametros/legales` | 🔒 | Años configurados (`[2027, 2026]`) | HU-21 |
+| GET | `/parametros/legales/:anio` | 🔒 | Parámetros del año (404 si no existen) | HU-21 |
 | PUT | `/parametros/legales/:anio` | `ADMIN` | Crea o actualiza los parámetros del año | HU-21 |
 | GET | `/parametros/valores-hora` | 🔒 | Valores vigentes e histórico | HU-22 |
-| POST | `/parametros/valores-hora` | `ADMIN` | `{ rol, valorHora, vigenteDesde }` | HU-22 |
+| POST | `/parametros/valores-hora` | `ADMIN` | `{ rol, valorHora, vigenteDesde }` (409 si ya existe esa vigencia) | HU-22 |
+| GET | `/parametros/bonificaciones-hijos` | 🔒 | Bonificación vigente por número de hijos | RN-04..06 |
 
 ## Reportes — `reportes` (E7)
 

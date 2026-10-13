@@ -1,15 +1,28 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router';
+import { Alerta } from '../components/Alerta';
 import { useAuth } from '../auth/useAuth';
 import { env } from '../config/env';
 
+const ERRORES_GOOGLE: Record<string, string> = {
+  google: 'No fue posible iniciar sesión con Google. Intenta de nuevo.',
+  'sin-acceso':
+    'Tu cuenta de Google no tiene acceso a la plataforma. Pide una invitación al administrador.',
+};
+
 /** HU-02 (correo y contraseña) y HU-03 (Google). */
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, usuario } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [error, setError] = useState<string | null>(null);
+  const [params] = useSearchParams();
+  const [error, setError] = useState<string | null>(
+    ERRORES_GOOGLE[params.get('error') ?? ''] ?? null,
+  );
   const [enviando, setEnviando] = useState(false);
+  const desde = (location.state as { desde?: string } | null)?.desde ?? '/';
+
+  if (usuario) return <Navigate to={desde} replace />;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,7 +31,6 @@ export function LoginPage() {
     setEnviando(true);
     try {
       await login(String(datos.get('email')), String(datos.get('password')));
-      const desde = (location.state as { desde?: string } | null)?.desde ?? '/';
       navigate(desde, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No fue posible iniciar sesión');
@@ -45,15 +57,12 @@ export function LoginPage() {
             minLength={8}
           />
         </label>
-        {error && (
-          <p role="alert" className="error">
-            {error}
-          </p>
-        )}
+        {error && <Alerta>{error}</Alerta>}
         <button type="submit" disabled={enviando}>
           {enviando ? 'Ingresando…' : 'Ingresar'}
         </button>
       </form>
+      <div className="separador">o</div>
       <a className="boton-secundario" href={`${env.apiUrl}/auth/google`}>
         Continuar con Google
       </a>

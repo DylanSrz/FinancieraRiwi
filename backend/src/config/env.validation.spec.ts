@@ -15,6 +15,18 @@ describe('validateEnv', () => {
     expect(env.REFRESH_TOKEN_DIAS).toBe(7);
   });
 
+  it('trata las variables vacías como no definidas', () => {
+    const env = validateEnv({
+      ...base,
+      GOOGLE_CLIENT_ID: '',
+      RESEND_API_KEY: '',
+      PORT: '',
+    });
+    expect(env.GOOGLE_CLIENT_ID).toBeUndefined();
+    expect(env.RESEND_API_KEY).toBeUndefined();
+    expect(env.PORT).toBe(3000);
+  });
+
   it('rechaza un secreto JWT demasiado corto', () => {
     expect(() => validateEnv({ ...base, JWT_ACCESS_SECRET: 'corto' })).toThrow(
       /JWT_ACCESS_SECRET/,

@@ -13,6 +13,7 @@ import { ParametrosPage } from '../pages/ParametrosPage';
 import { PeriodoDetallePage } from '../pages/PeriodoDetallePage';
 import { PeriodosPage } from '../pages/PeriodosPage';
 import { RecuperarPage } from '../pages/RecuperarPage';
+import { SimuladorPage } from '../pages/SimuladorPage';
 import { UsuariosPage } from '../pages/UsuariosPage';
 
 export const router = createBrowserRouter([
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
           { path: '/', element: <PanelPage /> },
           { path: '/colaboradores', element: <ColaboradoresPage /> },
           { path: '/colaboradores/importar', element: <ImportarColaboradoresPage /> },
+          { path: '/simulador', element: <SimuladorPage /> },
           { path: '/periodos', element: <PeriodosPage /> },
           { path: '/periodos/:id', element: <PeriodoDetallePage /> },
           { path: '/parametros', element: <ParametrosPage /> },

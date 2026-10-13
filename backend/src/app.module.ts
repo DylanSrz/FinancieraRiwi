@@ -25,7 +25,10 @@ import { UsuariosModule } from './usuarios/usuarios.module.js';
       validate: validateEnv,
       cache: true,
     }),
-    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
+    ThrottlerModule.forRoot({
+      throttlers: [{ ttl: 60_000, limit: 100 }],
+      skipIf: () => process.env.NODE_ENV === 'test',
+    }),
     PrismaModule,
     MailModule,
     AuditoriaModule,

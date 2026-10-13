@@ -112,6 +112,7 @@ Guía completa: [Configuración local](docs/guias/configuracion-local.md) · [Se
 | [Reglas de negocio](docs/requerimientos/04-reglas-de-negocio.md) | Fórmulas y casos de prueba |
 | [Plan de trabajo](docs/proceso/plan-de-trabajo.md) | Sprints, ceremonias y entregables |
 | [Reglas de trabajo](CONTRIBUTING.md) | Ramas, commits, PRs y revisiones |
+| [Changelog](CHANGELOG.md) | Cambios por versión y sprint |
 
 ## Gestión del proyecto
 
@@ -132,4 +133,4 @@ Detalle en [Roles y responsabilidades](docs/proceso/roles-y-responsabilidades.md
 
 ---
 
-RiwiTech · versión 0.1.0 (Sprint 0)
+RiwiTech · versión 0.1.0 (Sprint 1)

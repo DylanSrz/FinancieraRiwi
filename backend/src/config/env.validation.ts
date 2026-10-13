@@ -31,7 +31,11 @@ export const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 export function validateEnv(config: Record<string, unknown>): Env {
-  const result = envSchema.safeParse(config);
+  // Una variable vacía (`GOOGLE_CLIENT_ID=`) cuenta como no definida.
+  const sinVacias = Object.fromEntries(
+    Object.entries(config).filter(([, v]) => v !== ''),
+  );
+  const result = envSchema.safeParse(sinVacias);
   if (!result.success) {
     const detalle = result.error.issues
       .map((i) => `  - ${i.path.join('.')}: ${i.message}`)

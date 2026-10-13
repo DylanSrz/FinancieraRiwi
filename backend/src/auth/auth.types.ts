@@ -15,4 +15,11 @@ export interface ParDeTokens {
   accessToken: string;
   /** Se entrega en una cookie httpOnly, nunca en el cuerpo de la respuesta. */
   refreshToken: string;
+  refreshExpiraEn: Date;
+}
+
+/** Datos de la petición que se guardan con cada sesión. */
+export interface MetaSesion {
+  ip?: string;
+  userAgent?: string;
 }

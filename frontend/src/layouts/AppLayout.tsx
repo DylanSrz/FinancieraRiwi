@@ -1,9 +1,11 @@
 import { NavLink, Outlet } from 'react-router';
 import { useAuth } from '../auth/useAuth';
+import { NOMBRE_ROL_USUARIO } from '../lib/formato';
 
 const MENU = [
   { a: '/', texto: 'Panel', fin: true },
   { a: '/colaboradores', texto: 'Colaboradores' },
+  { a: '/simulador', texto: 'Simulador' },
   { a: '/periodos', texto: 'Liquidación' },
   { a: '/parametros', texto: 'Parámetros' },
   { a: '/usuarios', texto: 'Usuarios', soloAdmin: true },
@@ -27,8 +29,10 @@ export function AppLayout() {
         </nav>
         {usuario && (
           <div className="app__usuario">
+            <strong>{usuario.nombre}</strong>
             <span>{usuario.email}</span>
-            <button type="button" onClick={() => void logout()}>
+            <span>{NOMBRE_ROL_USUARIO[usuario.rol]}</span>
+            <button type="button" className="boton-secundario" onClick={() => void logout()}>
               Cerrar sesión
             </button>
           </div>

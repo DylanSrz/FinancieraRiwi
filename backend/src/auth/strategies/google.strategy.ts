@@ -20,11 +20,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(config: ConfigService<Env, true>) {
     super({
       clientID:
-        config.get('GOOGLE_CLIENT_ID', { infer: true }) ?? 'no-configurado',
+        config.get('GOOGLE_CLIENT_ID', { infer: true }) || 'no-configurado',
       clientSecret:
-        config.get('GOOGLE_CLIENT_SECRET', { infer: true }) ?? 'no-configurado',
+        config.get('GOOGLE_CLIENT_SECRET', { infer: true }) || 'no-configurado',
       callbackURL:
-        config.get('GOOGLE_CALLBACK_URL', { infer: true }) ??
+        config.get('GOOGLE_CALLBACK_URL', { infer: true }) ||
         'http://localhost:3000/api/auth/google/callback',
       scope: ['email', 'profile'],
     });
